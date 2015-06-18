@@ -71,6 +71,26 @@
             }
 
             meal.NumberRemaining--;
+
+            var mealInOrderedList = OrderedMeals.SingleOrDefault(m => m.Id == meal.Id);
+
+            if (mealInOrderedList != null)
+            {
+                mealInOrderedList.NumberRemaining++;
+            }
+            else
+            {
+                OrderedMeals.Add(new Meal
+                {
+                    Id = meal.Id,
+                    Name = meal.Name,
+                    NumberRemaining = 1,
+                    TimeToServe = meal.TimeToServe,
+                    Price = meal.Price
+                });
+            }
         }
+
+        public IList<Meal> OrderedMeals = new List<Meal>(); 
     }
 }

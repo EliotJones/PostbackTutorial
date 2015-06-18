@@ -27,3 +27,16 @@
     font-size: 1.6em;
     margin-bottom: 10px;
 }
+
+.dropdown {
+    width: 250px;
+    display: inline-block;
+}
+
+.dropdown-label {
+    display: block;
+}
+
+.alongside-dropdown {
+    display: inline-block;
+}

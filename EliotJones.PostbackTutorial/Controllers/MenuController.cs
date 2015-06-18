@@ -8,6 +8,8 @@
     public class MenuController : Controller
     {
         private const string MenuSessionKey = "menu";
+        private const string SubmitValue = "submit";
+        private const string AddValue = "add";
 
         private Menu Menu
         {
@@ -34,7 +36,7 @@
         }
 
         [HttpPost]
-        public ActionResult Order(OrderViewModel model)
+        public ActionResult Order(OrderViewModel model, string submit)
         {
             model.MenuItems = GetSelectListOfMenu();
 
