@@ -1,7 +1,18 @@
-﻿
+﻿@model EliotJones.PostbackTutorial.ViewModels.Menu.OrderViewModel
 @{
     ViewBag.Title = "Order";
 }
 
 <h2>Order</h2>
 
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary()
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.SelectedMenuItem, "Select a menu item")
+        @Html.ValidationMessageFor(m => m.SelectedMenuItem)
+        @Html.DropDownListFor(m => m.SelectedMenuItem, Model.MenuItems, "Please select", new {@class = "form-control"})
+    </div>
+    <button class="btn btn-default">Submit</button>
+}

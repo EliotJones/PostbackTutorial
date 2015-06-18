@@ -19,3 +19,11 @@
     text-decoration: none;
     color: #EEE;
 }
+
+.field-validation-error {
+    color: #C0392B;
+    font-weight: bold;
+    display: block;
+    font-size: 1.6em;
+    margin-bottom: 10px;
+}
