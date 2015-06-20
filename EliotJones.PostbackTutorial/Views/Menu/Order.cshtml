@@ -4,14 +4,30 @@
 }
 
 <h2>Order</h2>
+<hr/>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Order", "Menu", FormMethod.Post, htmlAttributes: new { id = "form" }))
 {
-    @Html.ValidationSummary()
-
-    @Html.Partial("_Previous", Model)
-    
-    @Html.Partial("_Current", Model, ViewData)
-
+    <div id="form-for-ajax">
+        @Html.Partial("_OrderPartial", Model)
+    </div>
     <button class="btn btn-default alongside-label" type="submit" name="submit" value="submit">Submit</button>
+}
+
+@section scripts{
+    <script>
+        function addMore() {
+            $.ajax({
+                url: '/Menu/Order?submit=add',
+                data: $('#form').serialize(),
+                type: 'POST'
+            }).done(function (data) {
+                $('#form-for-ajax').html(data);
+            })
+        .fail(function () {
+            return true;
+        });
+            event.preventDefault();
+        }
+    </script>
 }

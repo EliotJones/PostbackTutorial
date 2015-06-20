@@ -35,6 +35,7 @@
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Order(OrderViewModel model, string submit)
         {
             if (model.SelectedMenuItem.HasValue)
@@ -50,10 +51,14 @@
             }
 
             BindSelectLists(model);
-            
-            if (!ModelState.IsValid 
+
+            if (!ModelState.IsValid
                 || string.IsNullOrWhiteSpace(submit))
             {
+                if (Request.IsAjaxRequest())
+                {
+                    return PartialView("_OrderPartial", model);
+                }
                 return View(model);
             }
 
@@ -71,6 +76,10 @@
             ModelState.Remove("SelectedMenuItem");
             model.SelectedMenuItem = null;
 
+            if (Request.IsAjaxRequest())
+            {
+                return PartialView("_OrderPartial", model);
+            }
             return View("Order", model);
         }
 
@@ -92,7 +101,7 @@
             var model = Menu.OrderedMeals;
             return View(model);
         }
-        
+
         [HttpGet]
         public ActionResult Clear()
         {

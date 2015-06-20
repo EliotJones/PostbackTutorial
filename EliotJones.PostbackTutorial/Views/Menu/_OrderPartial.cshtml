@@ -1,0 +1,8 @@
+﻿@model EliotJones.PostbackTutorial.ViewModels.Menu.OrderViewModel
+
+    @Html.ValidationSummary()
+    @Html.AntiForgeryToken()
+
+    @Html.Partial("_Previous", Model)
+
+    @Html.Partial("_Current", Model, ViewData)
