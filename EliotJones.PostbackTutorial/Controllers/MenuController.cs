@@ -20,17 +20,16 @@
                     Session[MenuSessionKey] = new Menu();
                 }
 
-                return (Menu) Session[MenuSessionKey];
+                return (Menu)Session[MenuSessionKey];
             }
         }
 
         [HttpGet]
         public ActionResult Order()
         {
-            var model = new OrderViewModel
-            {
-                MenuItems = GetSelectListOfMenu()
-            };
+            var model = new OrderViewModel();
+
+            BindSelectLists(model);
 
             return View(model);
         }
@@ -38,33 +37,61 @@
         [HttpPost]
         public ActionResult Order(OrderViewModel model, string submit)
         {
-            model.MenuItems = GetSelectListOfMenu();
+            if (model.SelectedMenuItem.HasValue)
+            {
+                model.SelectedItems.Add(model.SelectedMenuItem.Value);
+            }
 
-            if (!ModelState.IsValid)
+            BindSelectLists(model);
+            
+            if (!ModelState.IsValid || string.IsNullOrWhiteSpace(submit))
             {
                 return View(model);
             }
 
-            Meal meal = Menu.Single(m => m.Id == model.SelectedMenuItem);
+            switch (submit)
+            {
+                case AddValue:
+                    return AddPostback(model);
+                default:
+                    return SubmitPostback(model);
+            }
+        }
 
-            Menu.Order(meal);
+        public ActionResult AddPostback(OrderViewModel model)
+        {
+            model.SelectedMenuItem = null;
 
-            return RedirectToAction("Summary", new { name = meal.Name, time = meal.TimeToServe });
+            return View("Order", model);
+        }
+
+        public ActionResult SubmitPostback(OrderViewModel model)
+        {
+            foreach (var id in model.SelectedItems)
+            {
+                Meal meal = Menu.Single(m => m.Id == id);
+
+                Menu.Order(meal);
+            }
+
+            return RedirectToAction("Summary");
         }
 
         [HttpGet]
-        public ActionResult Summary(string name, string time)
+        public ActionResult Summary()
         {
-            ViewBag.Message = "You ordered " + name + " successfully. "
-                              + "The meal will be ready in " + time + " minutes.";
-
             var model = Menu.OrderedMeals;
             return View(model);
         }
 
-        protected virtual SelectList GetSelectListOfMenu()
+        protected virtual void BindSelectLists(OrderViewModel model)
         {
-            return new SelectList(Menu, "Id", "Name");
+            model.CurrentMenuItems = new SelectList(Menu, "Id", "Name");
+
+            for (int i = 0; i < model.SelectedItems.Count; i++)
+            {
+                model.PreviousMenuItems.Add(new SelectList(Menu, "Id", "Name", model.SelectedItems[i]));
+            }
         }
 
         [HttpGet]

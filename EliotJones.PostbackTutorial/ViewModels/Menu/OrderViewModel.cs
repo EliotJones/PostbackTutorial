@@ -6,7 +6,9 @@
 
     public class OrderViewModel
     {
-        public SelectList MenuItems { get; set; }
+        public SelectList CurrentMenuItems { get; set; }
+
+        public IList<SelectList> PreviousMenuItems { get; set; }
 
         [Required(ErrorMessage = "Please select a menu item.")]
         public int? SelectedMenuItem { get; set; }
@@ -16,6 +18,7 @@
         public OrderViewModel()
         {
             this.SelectedItems = new List<int>();
+            this.PreviousMenuItems = new List<SelectList>();
         }
     }
 }
