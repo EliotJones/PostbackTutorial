@@ -39,12 +39,20 @@
         {
             if (model.SelectedMenuItem.HasValue)
             {
-                model.SelectedItems.Add(model.SelectedMenuItem.Value);
+                if (MealIsAvailable(model))
+                {
+                    model.SelectedItems.Add(model.SelectedMenuItem.Value);
+                }
+                else
+                {
+                    ModelState.AddModelError("SelectedMenuItem", "This menu item is out of stock.");
+                }
             }
 
             BindSelectLists(model);
             
-            if (!ModelState.IsValid || string.IsNullOrWhiteSpace(submit))
+            if (!ModelState.IsValid 
+                || string.IsNullOrWhiteSpace(submit))
             {
                 return View(model);
             }
@@ -58,14 +66,15 @@
             }
         }
 
-        public ActionResult AddPostback(OrderViewModel model)
+        private ActionResult AddPostback(OrderViewModel model)
         {
+            ModelState.Remove("SelectedMenuItem");
             model.SelectedMenuItem = null;
 
             return View("Order", model);
         }
 
-        public ActionResult SubmitPostback(OrderViewModel model)
+        private ActionResult SubmitPostback(OrderViewModel model)
         {
             foreach (var id in model.SelectedItems)
             {
@@ -83,6 +92,14 @@
             var model = Menu.OrderedMeals;
             return View(model);
         }
+        
+        [HttpGet]
+        public ActionResult Clear()
+        {
+            Session[MenuSessionKey] = null;
+
+            return RedirectToAction("Order");
+        }
 
         protected virtual void BindSelectLists(OrderViewModel model)
         {
@@ -94,12 +111,9 @@
             }
         }
 
-        [HttpGet]
-        public ActionResult Clear()
+        private bool MealIsAvailable(OrderViewModel model)
         {
-            Session[MenuSessionKey] = null;
-
-            return RedirectToAction("Order");
+            return Menu.Any(m => m.Id == model.SelectedMenuItem.Value && m.NumberRemaining > model.SelectedItems.Count(i => i == model.SelectedMenuItem.Value));
         }
     }
 }
