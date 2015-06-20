@@ -57,7 +57,9 @@
         {
             ViewBag.Message = "You ordered " + name + " successfully. "
                               + "The meal will be ready in " + time + " minutes.";
-            return View();
+
+            var model = Menu.OrderedMeals;
+            return View(model);
         }
 
         protected virtual SelectList GetSelectListOfMenu()

@@ -1,6 +1,18 @@
-﻿@{
+﻿@model IList<EliotJones.PostbackTutorial.Models.Meal>
+@{
     ViewBag.Title = "Summary";
 }
 
 <h2>Order Summary</h2>
 <p>@ViewBag.Message</p>
+
+<h3>All ordered meals:</h3>
+@if (Model != null && Model.Count > 0)
+{
+    <ul>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <li>@Model[i].NumberRemaining - @Model[i].Name</li>
+        }
+    </ul>
+}
