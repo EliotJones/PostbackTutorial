@@ -16,26 +16,15 @@
 
 @section scripts{
     <script>
-        function addMore(event) {
-            $.ajax({
-                url: '/Menu/Order?submit=add',
-                data: $('#form').serialize(),
-                type: 'POST'
-            }).done(function (data) {
+    function addMore(event) {
+        $.post('@Url.Action("Order", new { submit = "add" })',
+            $('#form').serialize())
+            .done(function (data) {
                 $('#form-for-ajax').html(data);
-            })
-        .fail(function () {
-            return true;
-        });
-            event.preventDefault();
-        }
-
-        function ie8SafePreventEvent(e) {
-            if (e.preventDefault) { e.preventDefault() }
-            else { e.stop() };
-
-            e.returnValue = false;
-            e.stopPropagation();
-        }
+            }).fail(function () {
+                return true;
+            });
+        event.preventDefault();
+    }
     </script>
 }
